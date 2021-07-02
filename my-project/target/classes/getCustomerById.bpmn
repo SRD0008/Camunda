@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.8.1">
+  <bpmn:process id="my-project-process" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow_1fp17al" sourceRef="StartEvent_1" targetRef="customerDetails" />
+    <bpmn:serviceTask id="customerDetails" name="customerDetails">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/api/customers</camunda:inputParameter>
+            <camunda:outputParameter name="customerDetails">
+              <camunda:list />
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1fp17al</bpmn:incoming>
+      <bpmn:outgoing>Flow_10ea07r</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0hux41a">
+      <bpmn:incoming>Flow_15xtgmr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_10ea07r" sourceRef="customerDetails" targetRef="Activity_0kam0os" />
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="customerName" label="customerName" type="string">
+            <camunda:validation />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1fp17al</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1ayg12s" messageRef="Message_1v872fl" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_0kam0os" name="task">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="id" label="id" type="long" />
+          <camunda:formField id="name" label="name" type="string" />
+          <camunda:formField id="company" label="company" type="string" />
+          <camunda:formField id="contact" label="contact" type="long" />
+          <camunda:formField id="address" label="address" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10ea07r</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p0kt5u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1p0kt5u" sourceRef="Activity_0kam0os" targetRef="Activity_1liedeh" />
+    <bpmn:sequenceFlow id="Flow_0jkxenm" sourceRef="Activity_1liedeh" targetRef="Activity_0h1wtld" />
+    <bpmn:serviceTask id="Activity_1liedeh" name="addNewCustomer">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+    "id": ${id},
+    "company": ${company},
+    "contact": ${contact},
+    "address": ${address},
+    "name": ${name}
+}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/api/add/customers</camunda:inputParameter>
+            <camunda:outputParameter name="response">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1p0kt5u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jkxenm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_15xtgmr" sourceRef="Activity_0h1wtld" targetRef="Event_0hux41a" />
+    <bpmn:userTask id="Activity_0h1wtld" name="check">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="response" label="response" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0jkxenm</bpmn:incoming>
+      <bpmn:outgoing>Flow_15xtgmr</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmn:signal id="Signal_113ixja" name="Signal_1vttj6d" />
+  <bpmn:message id="Message_1v872fl" name="message" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="my-project-process">
+      <bpmndi:BPMNEdge id="Flow_10ea07r_di" bpmnElement="Flow_10ea07r">
+        <di:waypoint x="380" y="117" />
+        <di:waypoint x="440" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p0kt5u_di" bpmnElement="Flow_1p0kt5u">
+        <di:waypoint x="540" y="117" />
+        <di:waypoint x="610" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fp17al_di" bpmnElement="SequenceFlow_1fp17al">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="280" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jkxenm_di" bpmnElement="Flow_0jkxenm">
+        <di:waypoint x="710" y="117" />
+        <di:waypoint x="810" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15xtgmr_di" bpmnElement="Flow_15xtgmr">
+        <di:waypoint x="910" y="117" />
+        <di:waypoint x="992" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0hux41a_di" bpmnElement="Event_0hux41a">
+        <dc:Bounds x="992" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="801" y="142" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1e9gkwe_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t5ttww_di" bpmnElement="customerDetails">
+        <dc:Bounds x="280" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nmy5fm_di" bpmnElement="Activity_0kam0os">
+        <dc:Bounds x="440" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0718zkb_di" bpmnElement="Activity_1liedeh">
+        <dc:Bounds x="610" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hzwpkf_di" bpmnElement="Activity_0h1wtld">
+        <dc:Bounds x="810" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
